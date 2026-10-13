@@ -1,0 +1,61 @@
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Картинки инструкции переносятся со старого сайта на Tilda один раз и сохраняются в репозитории
+      - name: Fetch images from old site (only missing ones)
+        run: |
+          mkdir -p assets/img
+          fetch() {
+            [ -s "assets/img/$1" ] && return 0
+            curl -fsSL "https://static.tildacdn.com/$2/$3" -o "assets/img/$1" \
+              || curl -fsSL "https://thb.tildacdn.com/$2/-/empty/$3" -o "assets/img/$1" \
+              || echo "WARN: could not fetch $1"
+          }
+          fetch manual-3-1-1.png tild3130-3262-4234-b030-653366313530 photo.png
+          fetch manual-3-1-2.png tild3239-3434-4434-a266-656363623866 photo.png
+          fetch manual-3-1-3.png tild6535-3235-4835-b939-386436383435 photo.png
+          fetch manual-3-1-4.png tild6436-3935-4136-a330-393965396234 photo.png
+          fetch manual-4-1.png tild3131-6366-4465-b961-333538373464 photo.png
+          fetch manual-4-1-1.png tild6235-6638-4437-b665-316332316132 photo.png
+          fetch manual-4-1-2.png tild3738-6562-4939-b663-616538396539 11111.png
+          fetch manual-4-1-3.png tild3737-3734-4035-a339-616234666661 unist.png
+          fetch it-info-document.jpg tild3134-3931-4636-b863-643133333634 _250530_143832_page-.jpg
+          ls -la assets/img
+
+      - name: Commit fetched images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/img
+          git diff --cached --quiet || (git commit -m "Add images from old site" && git push)
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
