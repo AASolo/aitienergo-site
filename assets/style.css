@@ -483,3 +483,10 @@ button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation
 }
 @media (max-width: 1240px) { .nav { white-space: normal; } .sub a { line-height: 1.35; padding-block: 10px; } }
 .cert-shot { max-width: 460px; }
+
+/* Пасхалка в подвале */
+.footer-bottom .copy { cursor: default; user-select: none; -webkit-tap-highlight-color: transparent; }
+.dev-egg { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 1000; display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: var(--navy); color: var(--on-dark); font: 600 .95rem/1.2 var(--font-body); box-shadow: 0 14px 40px var(--shadow), 0 0 0 1px rgba(46, 197, 245, .35); opacity: 0; transform: translate(-50%, 20px) scale(.96); pointer-events: none; transition: opacity .35s var(--ease), transform .35s var(--ease); max-width: calc(100vw - 32px); white-space: nowrap; }
+.dev-egg b { color: var(--spark); }
+.dev-egg strong { color: var(--cyan); }
+.dev-egg.show { opacity: 1; transform: translate(-50%, 0) scale(1); }

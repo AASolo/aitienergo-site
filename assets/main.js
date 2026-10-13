@@ -404,3 +404,25 @@
   window.addEventListener('hashchange', show);
   show();
 })();
+
+/* © в подвале: 5 нажатий подряд показывают автора сайта */
+(function () {
+  let n = 0, timer, toast;
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.footer-bottom .copy')) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => { n = 0; }, 1500);
+    if (++n < 5) return;
+    n = 0;
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.className = 'dev-egg';
+      toast.setAttribute('role', 'status');
+      toast.innerHTML = '<b>⚡</b> Сайт разработал <strong>kapa</strong>';
+      document.body.appendChild(toast);
+    }
+    toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 4000);
+  });
+})();
